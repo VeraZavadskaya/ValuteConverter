@@ -24,24 +24,35 @@ namespace ValuteConverter
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const string JSON_PATH = "https://www.cbr-xml-daily.ru/daily_json.js";
+        private CurrencyService _currencyService;
         public MainWindow()
         {
             InitializeComponent();
-            LoadCurrencyAsync();
+
+            _currencyService = new CurrencyService();
         }
 
-        async Task LoadCurrencyAsync()
+        private void SellCmb_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            HttpClient httpClient = new HttpClient();
-            var response = await httpClient.GetStringAsync(JSON_PATH);
 
-            if(!string.IsNullOrEmpty(response))
-            {
-                Currency currency =  JsonConvert.DeserializeObject<Currency>(response);
+        }
 
-                CurrentcyLV.ItemsSource = currency.Valute.Values;
-            }
+        private void PurchaseCmb_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private async void UpdateCourseBtn_Click(object sender, RoutedEventArgs e)
+        {
+            await _currencyService.LoadCurrencyAsync(CurrentcyLV);
+            _currencyService.LoadValutes(SellCmb);
+            _currencyService.LoadValutes(PurchaseCmb);
+
+        }
+
+        private void ConvertBtn_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
